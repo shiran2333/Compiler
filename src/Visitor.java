@@ -39,11 +39,26 @@ public class Visitor extends labBaseVisitor<Void> {
         }
         else {
             SymbolTableItem item = symbolTable.newVariableInteger(name);
-            System.out.printf("\t%s = alloca i32\n", item.getRegisterString());
-            if (ctx.initVal() != null) {
-                visit(ctx.initVal());
-                System.out.printf("\tstore i32 %s, i32* %s\n", info, item.getRegisterString());
+            if (item.isGlobal()) {
+                int value = 0;
+                if (ctx.initVal() != null) {
+                    visit(ctx.initVal());
+                    if (info.isRegister()) {
+                        System.out.print("Global variable should be static");
+                        System.exit(1);
+                    }
+                    value = info.getValue();
+                    System.out.printf("%s = global i32 %d\n", item.getRegisterString(), value);
+                }
             }
+            else {
+                System.out.printf("\t%s = alloca i32\n", item.getRegisterString());
+                if (ctx.initVal() != null) {
+                    visit(ctx.initVal());
+                    System.out.printf("\tstore i32 %s, i32* %s\n", info, item.getRegisterString());
+                }
+            }
+
         }
         return null;
     }
@@ -57,14 +72,29 @@ public class Visitor extends labBaseVisitor<Void> {
         }
         else {
             SymbolTableItem item = symbolTable.newConstantInteger(name);
-            System.out.printf("\t%s = alloca i32\n", item.getRegisterString());
-            visit(ctx.constInitVal());
-            if (info.isRegister()) {
-                System.out.print("constInitVal should be const value\n");
-                System.exit(1);
+            if (item.isGlobal()) {
+                int value = 0;
+                if (ctx.constInitVal() != null) {
+                    visit(ctx.constInitVal());
+                    if (info.isRegister()) {
+                        System.out.print("Global variable should be static");
+                        System.exit(1);
+                    }
+                    value = info.getValue();
+                    System.out.printf("%s = global i32 %d\n", item.getRegisterString(), value);
+                }
+                item.setIntValue(value);
             }
-            System.out.printf("\tstore i32 %s, i32* %s\n", info, item.getRegisterString());
-            item.setIntValue(info.getValue());
+            else {
+                System.out.printf("\t%s = alloca i32\n", item.getRegisterString());
+                visit(ctx.constInitVal());
+                if (info.isRegister()) {
+                    System.out.print("constInitVal should be const value\n");
+                    System.exit(1);
+                }
+                System.out.printf("\tstore i32 %s, i32* %s\n", info, item.getRegisterString());
+                item.setIntValue(info.getValue());
+            }
         }
         return null;
     }

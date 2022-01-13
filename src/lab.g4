@@ -1,6 +1,6 @@
 grammar lab;
 
-compUnit:       funcDef;
+compUnit:       decl* funcDef;
 decl:           constDecl | varDecl;
 constDecl:      'const' bType constDef ( ',' constDef )* ';' ;
 bType:          'int';
