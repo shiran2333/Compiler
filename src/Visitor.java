@@ -4,6 +4,7 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 
 public class Visitor extends labBaseVisitor<Void> {
+    int blockCount = 0;
     VisitorInfo info;
     SymbolTable symbolTable;
 
@@ -15,17 +16,17 @@ public class Visitor extends labBaseVisitor<Void> {
 
     @Override
     public Void visitFuncDef(labParser.FuncDefContext ctx) {
-        System.out.print("define dso_local i32 @main() ");
-        return super.visitFuncDef(ctx);
+        System.out.print("define dso_local i32 @main() {");
+        super.visitFuncDef(ctx);
+        System.out.println("}");
+        return null;
     }
 
     @Override
     public Void visitBlock(labParser.BlockContext ctx) {
-        System.out.println("{");
         symbolTable.createInnerTable();
         super.visitBlock(ctx);
         symbolTable.exitCurrentTable();
-        System.out.println("}");
         return null;
     }
 
@@ -82,15 +83,103 @@ public class Visitor extends labBaseVisitor<Void> {
             }
             visit(ctx.exp()); rhs = new VisitorInfo(info);
             System.out.printf("\tstore i32 %s, i32* %s\n", rhs, lhs.getRegisterString());
-        } else {
+        }
+        else if (ctx.IF() != null) {
+            int trueBlock = ++blockCount;
+            int falseBlock = ++blockCount;
+            int nxtBlock = ++blockCount;
+            visit(ctx.cond());
+            System.out.printf("\nblock%d:\n", trueBlock);
+            visit(ctx.stmt(0));
+            System.out.printf("\tbr label %%block%d\n", nxtBlock);
+            System.out.printf("\nblock%d:\n", falseBlock);
+            if (ctx.ELSE() != null)
+                visit(ctx.stmt(1));
+            System.out.printf("\tbr label %%block%d\n", nxtBlock);
+            System.out.printf("\nblock%d:\n", nxtBlock);
+        }
+        else {
             super.visitStmt(ctx);
         }
         return null;
     }
 
     @Override
-    public Void visitExp(labParser.ExpContext ctx) {
-        return super.visitExp(ctx);
+    public Void visitCond(labParser.CondContext ctx) {
+        super.visitCond(ctx); VisitorInfo val = new VisitorInfo(info); SymbolTableItem item = symbolTable.newRegister();
+        System.out.printf("\t%s = icmp ne i32 %s, 0\n", item.getRegisterString(), info);
+        System.out.printf("\tbr i1 %s, label %%block%d, label %%block%d\n", item.getRegisterString(), blockCount - 2, blockCount - 1);
+        return null;
+    }
+
+    @Override
+    public Void visitLorExp(labParser.LorExpContext ctx) {
+        if (ctx.lorExp() == null) super.visitLorExp(ctx);
+        else {
+            VisitorInfo lhs, rhs;
+            visit(ctx.lorExp()); lhs = new VisitorInfo(info);
+            visit(ctx.landExp()); rhs = new VisitorInfo(info);
+            SymbolTableItem item1 = symbolTable.newRegister(), item2 = symbolTable.newRegister();
+            SymbolTableItem item3 = symbolTable.newRegister(), item4 = symbolTable.newRegister();
+            System.out.printf("\t%s = icmp ne i32 %s, 0\n", item1.getRegisterString(), lhs);
+            System.out.printf("\t%s = icmp ne i32 %s, 0\n", item2.getRegisterString(), rhs);
+            System.out.printf("\t%s = or i1 %s, %s", item3.getRegisterString(), item1.getRegisterString(), item2.getRegisterString());
+            System.out.printf("\t%s = zext i1 %s to i32\n", item4.getRegisterString(), item3.getRegisterString());
+            info.setSymbol(item4);
+        }
+        return super.visitLorExp(ctx);
+    }
+
+    @Override
+    public Void visitLandExp(labParser.LandExpContext ctx) {
+        if (ctx.landExp() == null) super.visitLandExp(ctx);
+        else {
+            VisitorInfo lhs, rhs;
+            visit(ctx.landExp()); lhs = new VisitorInfo(info);
+            visit(ctx.eqExp()); rhs = new VisitorInfo(info);
+            SymbolTableItem item1 = symbolTable.newRegister(), item2 = symbolTable.newRegister();
+            SymbolTableItem item3 = symbolTable.newRegister(), item4 = symbolTable.newRegister();
+            System.out.printf("\t%s = icmp ne i32 %s, 0\n", item1.getRegisterString(), lhs);
+            System.out.printf("\t%s = icmp ne i32 %s, 0\n", item2.getRegisterString(), rhs);
+            System.out.printf("\t%s = and i1 %s, %s", item3.getRegisterString(), item1.getRegisterString(), item2.getRegisterString());
+            System.out.printf("\t%s = zext i1 %s to i32\n", item4.getRegisterString(), item3.getRegisterString());
+            info.setSymbol(item4);
+        }
+        return null;
+    }
+
+    @Override
+    public Void visitEqExp(labParser.EqExpContext ctx) {
+        if (ctx.eqExp() == null) super.visitEqExp(ctx);
+        else {
+            VisitorInfo lhs, rhs;
+            visit(ctx.eqExp()); lhs = new VisitorInfo(info);
+            visit(ctx.relExp()); rhs = new VisitorInfo(info);
+            SymbolTableItem item1 = symbolTable.newRegister(), item2 = symbolTable.newRegister();
+            if (ctx.EQ() != null) System.out.printf("\t%s = icmp eq i32 %s, %s\n", item1.getRegisterString(), lhs, rhs);
+            if (ctx.NEQ() != null) System.out.printf("\t%s = icmp ne i32 %s, %s\n", item1.getRegisterString(), lhs, rhs);
+            System.out.printf("\t%s = zext i1 %s to i32\n", item2.getRegisterString(), item1.getRegisterString());
+            info.setSymbol(item2);
+        }
+        return null;
+    }
+
+    @Override
+    public Void visitRelExp(labParser.RelExpContext ctx) {
+        if (ctx.relExp() == null) super.visitRelExp(ctx);
+        else {
+            VisitorInfo lhs, rhs;
+            visit(ctx.relExp()); lhs = new VisitorInfo(info);
+            visit(ctx.addExp()); rhs = new VisitorInfo(info);
+            SymbolTableItem item1 = symbolTable.newRegister(), item2 = symbolTable.newRegister();
+            if (ctx.LT() != null) System.out.printf("\t%s = icmp slt i32 %s, %s\n", item1.getRegisterString(), lhs, rhs);
+            if (ctx.LTEQ() != null) System.out.printf("\t%s = icmp sle i32 %s, %s\n", item1.getRegisterString(), lhs, rhs);
+            if (ctx.GT() != null) System.out.printf("\t%s = icmp sgt i32 %s, %s\n", item1.getRegisterString(), lhs, rhs);
+            if (ctx.GTEQ() != null) System.out.printf("\t%s = icmp sge i32 %s, %s\n", item1.getRegisterString(), lhs, rhs);
+            System.out.printf("\t%s = zext i1 %s to i32\n", item2.getRegisterString(), item1.getRegisterString());
+            info.setSymbol(item2);
+        }
+        return null;
     }
 
     @Override

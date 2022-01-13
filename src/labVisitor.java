@@ -106,6 +106,12 @@ public interface labVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitExp(labParser.ExpContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link labParser#cond}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitCond(labParser.CondContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link labParser#lval}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -118,23 +124,17 @@ public interface labVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitPrimaryExp(labParser.PrimaryExpContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link labParser#addExp}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitAddExp(labParser.AddExpContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link labParser#mulExp}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitMulExp(labParser.MulExpContext ctx);
-	/**
 	 * Visit a parse tree produced by {@link labParser#unaryExp}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitUnaryExp(labParser.UnaryExpContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link labParser#unaryOp}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitUnaryOp(labParser.UnaryOpContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link labParser#funcRParams}.
 	 * @param ctx the parse tree
@@ -142,11 +142,41 @@ public interface labVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitFuncRParams(labParser.FuncRParamsContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link labParser#unaryOp}.
+	 * Visit a parse tree produced by {@link labParser#mulExp}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitUnaryOp(labParser.UnaryOpContext ctx);
+	T visitMulExp(labParser.MulExpContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link labParser#addExp}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitAddExp(labParser.AddExpContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link labParser#relExp}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitRelExp(labParser.RelExpContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link labParser#eqExp}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitEqExp(labParser.EqExpContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link labParser#landExp}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitLandExp(labParser.LandExpContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link labParser#lorExp}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitLorExp(labParser.LorExpContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link labParser#number}.
 	 * @param ctx the parse tree

@@ -16,24 +16,44 @@ funcType:       'int';
 block:          '{' (blockItem)* '}';
 blockItem:      decl | stmt;
 stmt:           lval '=' exp ';'
+                | block
                 | (exp)? ';'
+                | IF '(' cond ')' stmt (ELSE stmt)?
                 | RETURN exp ';';
 exp:            addExp;
+cond:           lorExp;
 lval:           ident;
 primaryExp:     '(' exp ')' | lval | number;
-addExp:         mulExp
-                | addExp (ADD | SUB) mulExp;
-mulExp:         unaryExp
-                | mulExp (MUL | DIV | MOD) unaryExp;
 unaryExp:       primaryExp
                 | ident '(' (funcRParams)? ')'
                 | unaryOp unaryExp;
+unaryOp:        ADD | SUB | NOT;
 funcRParams:    exp ( ',' exp )*;
-unaryOp:        ADD | SUB;
+mulExp:         unaryExp
+                | mulExp (MUL | DIV | MOD) unaryExp;
+addExp:         mulExp
+                | addExp (ADD | SUB) mulExp;
+relExp:         addExp
+                | relExp (LT | GT | LTEQ | GTEQ) addExp;
+eqExp:          relExp
+                | eqExp (EQ | NEQ) relExp;
+landExp:        eqExp
+                | landExp '&&' eqExp;
+lorExp:         landExp
+                | lorExp '||' landExp;
 number:         DecimalConst | OctalConst | HexadecimalConst;
 ident:          Ident;
 
 RETURN: 'return';
+IF: 'if';
+ELSE: 'else';
+
+LT: '<';
+GT: '>';
+LTEQ: '<=';
+GTEQ: '>=';
+EQ: '==';
+NEQ: '!=';
 
 Ident: NonDigit IC;
 fragment IC: ((NonDigit | Digit) IC)?;
@@ -51,6 +71,7 @@ NonzeroDigit: '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9';
 OctalDigit: '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7';
 HexadecimalDigit: '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | 'a' | 'b' | 'c' | 'd' | 'e' | 'f' | 'A' | 'B' | 'C' | 'D' | 'E' | 'F';
 
+NOT: '!';
 ADD: '+';
 SUB: '-';
 MUL: '*';
