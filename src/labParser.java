@@ -16,10 +16,10 @@ public class labParser extends Parser {
 	protected static final PredictionContextCache _sharedContextCache =
 		new PredictionContextCache();
 	public static final int
-		T__0=1, T__1=2, T__2=3, T__3=4, T__4=5, T__5=6, T__6=7, T__7=8, T__8=9, 
-		T__9=10, DecimalConst=11, OctalConst=12, HexadecimalConst=13, HexadecimalPrefix=14, 
-		Digit=15, NonzeroDigit=16, OctalDigit=17, HexadecimalDigit=18, Whitespace=19, 
-		Newline=20, BlockComment=21, LineComment=22;
+		T__0=1, T__1=2, T__2=3, T__3=4, T__4=5, T__5=6, T__6=7, T__7=8, DecimalConst=9, 
+		OctalConst=10, HexadecimalConst=11, HexadecimalPrefix=12, Digit=13, NonzeroDigit=14, 
+		OctalDigit=15, HexadecimalDigit=16, ADD=17, SUB=18, MUL=19, DIV=20, MOD=21, 
+		Whitespace=22, Newline=23, BlockComment=24, LineComment=25;
 	public static final int
 		RULE_compUnit = 0, RULE_funcDef = 1, RULE_funcType = 2, RULE_ident = 3, 
 		RULE_block = 4, RULE_stmt = 5, RULE_exp = 6, RULE_addExp = 7, RULE_mulExp = 8, 
@@ -35,16 +35,17 @@ public class labParser extends Parser {
 	private static String[] makeLiteralNames() {
 		return new String[] {
 			null, "'('", "')'", "'int'", "'main'", "'{'", "'}'", "'return'", "';'", 
-			"'+'", "'-'"
+			null, null, null, null, null, null, null, null, "'+'", "'-'", "'*'", 
+			"'/'", "'%'"
 		};
 	}
 	private static final String[] _LITERAL_NAMES = makeLiteralNames();
 	private static String[] makeSymbolicNames() {
 		return new String[] {
-			null, null, null, null, null, null, null, null, null, null, null, "DecimalConst", 
+			null, null, null, null, null, null, null, null, null, "DecimalConst", 
 			"OctalConst", "HexadecimalConst", "HexadecimalPrefix", "Digit", "NonzeroDigit", 
-			"OctalDigit", "HexadecimalDigit", "Whitespace", "Newline", "BlockComment", 
-			"LineComment"
+			"OctalDigit", "HexadecimalDigit", "ADD", "SUB", "MUL", "DIV", "MOD", 
+			"Whitespace", "Newline", "BlockComment", "LineComment"
 		};
 	}
 	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
@@ -352,7 +353,7 @@ public class labParser extends Parser {
 			enterOuterAlt(_localctx, 1);
 			{
 			setState(46);
-			addExp();
+			addExp(0);
 			}
 		}
 		catch (RecognitionException re) {
@@ -370,6 +371,11 @@ public class labParser extends Parser {
 		public MulExpContext mulExp() {
 			return getRuleContext(MulExpContext.class,0);
 		}
+		public AddExpContext addExp() {
+			return getRuleContext(AddExpContext.class,0);
+		}
+		public TerminalNode ADD() { return getToken(labParser.ADD, 0); }
+		public TerminalNode SUB() { return getToken(labParser.SUB, 0); }
 		public AddExpContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -382,13 +388,58 @@ public class labParser extends Parser {
 	}
 
 	public final AddExpContext addExp() throws RecognitionException {
-		AddExpContext _localctx = new AddExpContext(_ctx, getState());
-		enterRule(_localctx, 14, RULE_addExp);
+		return addExp(0);
+	}
+
+	private AddExpContext addExp(int _p) throws RecognitionException {
+		ParserRuleContext _parentctx = _ctx;
+		int _parentState = getState();
+		AddExpContext _localctx = new AddExpContext(_ctx, _parentState);
+		AddExpContext _prevctx = _localctx;
+		int _startState = 14;
+		enterRecursionRule(_localctx, 14, RULE_addExp, _p);
+		int _la;
 		try {
+			int _alt;
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(48);
-			mulExp();
+			{
+			setState(49);
+			mulExp(0);
+			}
+			_ctx.stop = _input.LT(-1);
+			setState(56);
+			_errHandler.sync(this);
+			_alt = getInterpreter().adaptivePredict(_input,0,_ctx);
+			while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
+				if ( _alt==1 ) {
+					if ( _parseListeners!=null ) triggerExitRuleEvent();
+					_prevctx = _localctx;
+					{
+					{
+					_localctx = new AddExpContext(_parentctx, _parentState);
+					pushNewRecursionContext(_localctx, _startState, RULE_addExp);
+					setState(51);
+					if (!(precpred(_ctx, 1))) throw new FailedPredicateException(this, "precpred(_ctx, 1)");
+					setState(52);
+					_la = _input.LA(1);
+					if ( !(_la==ADD || _la==SUB) ) {
+					_errHandler.recoverInline(this);
+					}
+					else {
+						if ( _input.LA(1)==Token.EOF ) matchedEOF = true;
+						_errHandler.reportMatch(this);
+						consume();
+					}
+					setState(53);
+					mulExp(0);
+					}
+					} 
+				}
+				setState(58);
+				_errHandler.sync(this);
+				_alt = getInterpreter().adaptivePredict(_input,0,_ctx);
+			}
 			}
 		}
 		catch (RecognitionException re) {
@@ -397,7 +448,7 @@ public class labParser extends Parser {
 			_errHandler.recover(this, re);
 		}
 		finally {
-			exitRule();
+			unrollRecursionContexts(_parentctx);
 		}
 		return _localctx;
 	}
@@ -406,6 +457,12 @@ public class labParser extends Parser {
 		public UnaryExpContext unaryExp() {
 			return getRuleContext(UnaryExpContext.class,0);
 		}
+		public MulExpContext mulExp() {
+			return getRuleContext(MulExpContext.class,0);
+		}
+		public TerminalNode MUL() { return getToken(labParser.MUL, 0); }
+		public TerminalNode DIV() { return getToken(labParser.DIV, 0); }
+		public TerminalNode MOD() { return getToken(labParser.MOD, 0); }
 		public MulExpContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -418,13 +475,58 @@ public class labParser extends Parser {
 	}
 
 	public final MulExpContext mulExp() throws RecognitionException {
-		MulExpContext _localctx = new MulExpContext(_ctx, getState());
-		enterRule(_localctx, 16, RULE_mulExp);
+		return mulExp(0);
+	}
+
+	private MulExpContext mulExp(int _p) throws RecognitionException {
+		ParserRuleContext _parentctx = _ctx;
+		int _parentState = getState();
+		MulExpContext _localctx = new MulExpContext(_ctx, _parentState);
+		MulExpContext _prevctx = _localctx;
+		int _startState = 16;
+		enterRecursionRule(_localctx, 16, RULE_mulExp, _p);
+		int _la;
 		try {
+			int _alt;
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(50);
+			{
+			setState(60);
 			unaryExp();
+			}
+			_ctx.stop = _input.LT(-1);
+			setState(67);
+			_errHandler.sync(this);
+			_alt = getInterpreter().adaptivePredict(_input,1,_ctx);
+			while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
+				if ( _alt==1 ) {
+					if ( _parseListeners!=null ) triggerExitRuleEvent();
+					_prevctx = _localctx;
+					{
+					{
+					_localctx = new MulExpContext(_parentctx, _parentState);
+					pushNewRecursionContext(_localctx, _startState, RULE_mulExp);
+					setState(62);
+					if (!(precpred(_ctx, 1))) throw new FailedPredicateException(this, "precpred(_ctx, 1)");
+					setState(63);
+					_la = _input.LA(1);
+					if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << MUL) | (1L << DIV) | (1L << MOD))) != 0)) ) {
+					_errHandler.recoverInline(this);
+					}
+					else {
+						if ( _input.LA(1)==Token.EOF ) matchedEOF = true;
+						_errHandler.reportMatch(this);
+						consume();
+					}
+					setState(64);
+					unaryExp();
+					}
+					} 
+				}
+				setState(69);
+				_errHandler.sync(this);
+				_alt = getInterpreter().adaptivePredict(_input,1,_ctx);
+			}
 			}
 		}
 		catch (RecognitionException re) {
@@ -433,7 +535,7 @@ public class labParser extends Parser {
 			_errHandler.recover(this, re);
 		}
 		finally {
-			exitRule();
+			unrollRecursionContexts(_parentctx);
 		}
 		return _localctx;
 	}
@@ -463,7 +565,7 @@ public class labParser extends Parser {
 		UnaryExpContext _localctx = new UnaryExpContext(_ctx, getState());
 		enterRule(_localctx, 18, RULE_unaryExp);
 		try {
-			setState(56);
+			setState(74);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case T__0:
@@ -472,17 +574,17 @@ public class labParser extends Parser {
 			case HexadecimalConst:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(52);
+				setState(70);
 				primaryExp();
 				}
 				break;
-			case T__8:
-			case T__9:
+			case ADD:
+			case SUB:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(53);
+				setState(71);
 				unaryOp();
-				setState(54);
+				setState(72);
 				unaryExp();
 				}
 				break;
@@ -523,17 +625,17 @@ public class labParser extends Parser {
 		PrimaryExpContext _localctx = new PrimaryExpContext(_ctx, getState());
 		enterRule(_localctx, 20, RULE_primaryExp);
 		try {
-			setState(63);
+			setState(81);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case T__0:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(58);
+				setState(76);
 				match(T__0);
-				setState(59);
+				setState(77);
 				exp();
-				setState(60);
+				setState(78);
 				match(T__1);
 				}
 				break;
@@ -542,7 +644,7 @@ public class labParser extends Parser {
 			case HexadecimalConst:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(62);
+				setState(80);
 				number();
 				}
 				break;
@@ -562,6 +664,8 @@ public class labParser extends Parser {
 	}
 
 	public static class UnaryOpContext extends ParserRuleContext {
+		public TerminalNode ADD() { return getToken(labParser.ADD, 0); }
+		public TerminalNode SUB() { return getToken(labParser.SUB, 0); }
 		public UnaryOpContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -580,9 +684,9 @@ public class labParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(65);
+			setState(83);
 			_la = _input.LA(1);
-			if ( !(_la==T__8 || _la==T__9) ) {
+			if ( !(_la==ADD || _la==SUB) ) {
 			_errHandler.recoverInline(this);
 			}
 			else {
@@ -625,7 +729,7 @@ public class labParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(67);
+			setState(85);
 			_la = _input.LA(1);
 			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << DecimalConst) | (1L << OctalConst) | (1L << HexadecimalConst))) != 0)) ) {
 			_errHandler.recoverInline(this);
@@ -648,23 +752,52 @@ public class labParser extends Parser {
 		return _localctx;
 	}
 
+	public boolean sempred(RuleContext _localctx, int ruleIndex, int predIndex) {
+		switch (ruleIndex) {
+		case 7:
+			return addExp_sempred((AddExpContext)_localctx, predIndex);
+		case 8:
+			return mulExp_sempred((MulExpContext)_localctx, predIndex);
+		}
+		return true;
+	}
+	private boolean addExp_sempred(AddExpContext _localctx, int predIndex) {
+		switch (predIndex) {
+		case 0:
+			return precpred(_ctx, 1);
+		}
+		return true;
+	}
+	private boolean mulExp_sempred(MulExpContext _localctx, int predIndex) {
+		switch (predIndex) {
+		case 1:
+			return precpred(_ctx, 1);
+		}
+		return true;
+	}
+
 	public static final String _serializedATN =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\30H\4\2\t\2\4\3\t"+
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\33Z\4\2\t\2\4\3\t"+
 		"\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t\13\4"+
 		"\f\t\f\4\r\t\r\4\16\t\16\3\2\3\2\3\3\3\3\3\3\3\3\3\3\3\3\3\4\3\4\3\5\3"+
-		"\5\3\6\3\6\3\6\3\6\3\7\3\7\3\7\3\7\3\b\3\b\3\t\3\t\3\n\3\n\3\13\3\13\3"+
-		"\13\3\13\5\13;\n\13\3\f\3\f\3\f\3\f\3\f\5\fB\n\f\3\r\3\r\3\16\3\16\3\16"+
-		"\2\2\17\2\4\6\b\n\f\16\20\22\24\26\30\32\2\4\3\2\13\f\3\2\r\17\2<\2\34"+
-		"\3\2\2\2\4\36\3\2\2\2\6$\3\2\2\2\b&\3\2\2\2\n(\3\2\2\2\f,\3\2\2\2\16\60"+
-		"\3\2\2\2\20\62\3\2\2\2\22\64\3\2\2\2\24:\3\2\2\2\26A\3\2\2\2\30C\3\2\2"+
-		"\2\32E\3\2\2\2\34\35\5\4\3\2\35\3\3\2\2\2\36\37\5\6\4\2\37 \5\b\5\2 !"+
-		"\7\3\2\2!\"\7\4\2\2\"#\5\n\6\2#\5\3\2\2\2$%\7\5\2\2%\7\3\2\2\2&\'\7\6"+
-		"\2\2\'\t\3\2\2\2()\7\7\2\2)*\5\f\7\2*+\7\b\2\2+\13\3\2\2\2,-\7\t\2\2-"+
-		".\5\16\b\2./\7\n\2\2/\r\3\2\2\2\60\61\5\20\t\2\61\17\3\2\2\2\62\63\5\22"+
-		"\n\2\63\21\3\2\2\2\64\65\5\24\13\2\65\23\3\2\2\2\66;\5\26\f\2\678\5\30"+
-		"\r\289\5\24\13\29;\3\2\2\2:\66\3\2\2\2:\67\3\2\2\2;\25\3\2\2\2<=\7\3\2"+
-		"\2=>\5\16\b\2>?\7\4\2\2?B\3\2\2\2@B\5\32\16\2A<\3\2\2\2A@\3\2\2\2B\27"+
-		"\3\2\2\2CD\t\2\2\2D\31\3\2\2\2EF\t\3\2\2F\33\3\2\2\2\4:A";
+		"\5\3\6\3\6\3\6\3\6\3\7\3\7\3\7\3\7\3\b\3\b\3\t\3\t\3\t\3\t\3\t\3\t\7\t"+
+		"9\n\t\f\t\16\t<\13\t\3\n\3\n\3\n\3\n\3\n\3\n\7\nD\n\n\f\n\16\nG\13\n\3"+
+		"\13\3\13\3\13\3\13\5\13M\n\13\3\f\3\f\3\f\3\f\3\f\5\fT\n\f\3\r\3\r\3\16"+
+		"\3\16\3\16\2\4\20\22\17\2\4\6\b\n\f\16\20\22\24\26\30\32\2\5\3\2\23\24"+
+		"\3\2\25\27\3\2\13\r\2P\2\34\3\2\2\2\4\36\3\2\2\2\6$\3\2\2\2\b&\3\2\2\2"+
+		"\n(\3\2\2\2\f,\3\2\2\2\16\60\3\2\2\2\20\62\3\2\2\2\22=\3\2\2\2\24L\3\2"+
+		"\2\2\26S\3\2\2\2\30U\3\2\2\2\32W\3\2\2\2\34\35\5\4\3\2\35\3\3\2\2\2\36"+
+		"\37\5\6\4\2\37 \5\b\5\2 !\7\3\2\2!\"\7\4\2\2\"#\5\n\6\2#\5\3\2\2\2$%\7"+
+		"\5\2\2%\7\3\2\2\2&\'\7\6\2\2\'\t\3\2\2\2()\7\7\2\2)*\5\f\7\2*+\7\b\2\2"+
+		"+\13\3\2\2\2,-\7\t\2\2-.\5\16\b\2./\7\n\2\2/\r\3\2\2\2\60\61\5\20\t\2"+
+		"\61\17\3\2\2\2\62\63\b\t\1\2\63\64\5\22\n\2\64:\3\2\2\2\65\66\f\3\2\2"+
+		"\66\67\t\2\2\2\679\5\22\n\28\65\3\2\2\29<\3\2\2\2:8\3\2\2\2:;\3\2\2\2"+
+		";\21\3\2\2\2<:\3\2\2\2=>\b\n\1\2>?\5\24\13\2?E\3\2\2\2@A\f\3\2\2AB\t\3"+
+		"\2\2BD\5\24\13\2C@\3\2\2\2DG\3\2\2\2EC\3\2\2\2EF\3\2\2\2F\23\3\2\2\2G"+
+		"E\3\2\2\2HM\5\26\f\2IJ\5\30\r\2JK\5\24\13\2KM\3\2\2\2LH\3\2\2\2LI\3\2"+
+		"\2\2M\25\3\2\2\2NO\7\3\2\2OP\5\16\b\2PQ\7\4\2\2QT\3\2\2\2RT\5\32\16\2"+
+		"SN\3\2\2\2SR\3\2\2\2T\27\3\2\2\2UV\t\2\2\2V\31\3\2\2\2WX\t\4\2\2X\33\3"+
+		"\2\2\2\6:ELS";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

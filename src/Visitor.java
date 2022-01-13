@@ -32,6 +32,47 @@ public class Visitor extends labBaseVisitor<Void> {
     }
 
     @Override
+    public Void visitExp(labParser.ExpContext ctx) {
+        return super.visitExp(ctx);
+    }
+
+    @Override
+    public Void visitAddExp(labParser.AddExpContext ctx) {
+        if (ctx.addExp() != null) {
+            int lhs, rhs;
+            visit(ctx.addExp()); lhs = value;
+            visit(ctx.mulExp()); rhs = value;
+            if (ctx.ADD() != null) value = lhs + rhs;
+            if (ctx.SUB() != null) value = lhs - rhs;
+        } else {
+            super.visitAddExp(ctx);
+        }
+        return null;
+    }
+
+    @Override
+    public Void visitMulExp(labParser.MulExpContext ctx) {
+        if (ctx.mulExp() != null) {
+            int lhs, rhs;
+            visit(ctx.mulExp()); lhs = value;
+            visit(ctx.unaryExp()); rhs = value;
+            if (ctx.MUL() != null) value = lhs * rhs;
+            if (ctx.MOD() != null) value = lhs % rhs;
+            if (ctx.DIV() != null) value = lhs / rhs;
+        } else {
+            super.visitMulExp(ctx);
+        }
+        return null;
+    }
+
+    @Override
+    public Void visitUnaryExp(labParser.UnaryExpContext ctx) {
+        super.visitUnaryExp(ctx);
+        if (ctx.unaryOp() != null && ctx.unaryOp().SUB() != null) value = -value;
+        return null;
+    }
+
+    @Override
     public Void visitNumber(labParser.NumberContext ctx) {
         if (ctx.getText().equals("0")) value = 0;
         else if (ctx.DecimalConst() != null) value = Integer.parseInt(ctx.getText());

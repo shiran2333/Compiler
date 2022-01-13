@@ -7,11 +7,11 @@ ident: 'main';
 block: '{' stmt '}';
 stmt: 'return' exp ';';
 exp: addExp;
-addExp: mulExp;
-mulExp: unaryExp;
+addExp: mulExp | addExp (ADD | SUB) mulExp;
+mulExp: unaryExp | mulExp (MUL | DIV | MOD) unaryExp;
 unaryExp: primaryExp | unaryOp unaryExp;
 primaryExp: '(' exp ')' | number;
-unaryOp: '+' | '-';
+unaryOp: ADD | SUB;
 number: DecimalConst | OctalConst | HexadecimalConst;
 
 DecimalConst: NonzeroDigit DC;
@@ -26,6 +26,12 @@ Digit: '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9';
 NonzeroDigit: '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9';
 OctalDigit: '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7';
 HexadecimalDigit: '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | 'a' | 'b' | 'c' | 'd' | 'e' | 'f' | 'A' | 'B' | 'C' | 'D' | 'E' | 'F';
+
+ADD: '+';
+SUB: '-';
+MUL: '*';
+DIV: '/';
+MOD: '%';
 
 Whitespace
     :   [ \t]+
