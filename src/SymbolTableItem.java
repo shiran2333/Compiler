@@ -8,6 +8,8 @@ public class SymbolTableItem {
     private int registerID = -1;
     private ArrayList<SymbolTableItem> params;
 
+    private int intValue;
+
     private static final int VOID = 0;
     private static final int INT = 1;
 
@@ -45,6 +47,14 @@ public class SymbolTableItem {
         this.registerID = registerID;
     }
 
+    public int getIntValue() {
+        return intValue;
+    }
+
+    public void setIntValue(int intValue) {
+        this.intValue = intValue;
+    }
+
     public String getName() {
         return name;
     }
@@ -80,6 +90,11 @@ public class SymbolTableItem {
 
     public static SymbolTableItem newVoidFunction(String name, ArrayList<SymbolTableItem> params) {
         SymbolTableItem res = new SymbolTableItem(name, VOID, FUNCTION, GLOBAL);
+        res.setParams(params);
+        return res;
+    }
+    public static SymbolTableItem newIntFunction(String name, ArrayList<SymbolTableItem> params) {
+        SymbolTableItem res = new SymbolTableItem(name, INT, FUNCTION, GLOBAL);
         res.setParams(params);
         return res;
     }

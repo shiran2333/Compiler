@@ -1,6 +1,7 @@
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
+import java.util.ArrayList;
 
 public class Visitor extends labBaseVisitor<Void> {
     VisitorInfo info;
@@ -54,7 +55,7 @@ public class Visitor extends labBaseVisitor<Void> {
             System.exit(1);
         }
         else {
-            SymbolTableItem item = symbolTable.newVariableInteger(name);
+            SymbolTableItem item = symbolTable.newConstantInteger(name);
             System.out.printf("\t%s = alloca i32\n", item.getRegisterString());
             visit(ctx.constInitVal());
             if (info.isRegister()) {
@@ -62,6 +63,7 @@ public class Visitor extends labBaseVisitor<Void> {
                 System.exit(1);
             }
             System.out.printf("\tstore i32 %s, i32* %s\n", info, item.getRegisterString());
+            item.setIntValue(info.getValue());
         }
         return null;
     }
@@ -73,9 +75,13 @@ public class Visitor extends labBaseVisitor<Void> {
             System.out.printf("\tret i32 %s\n", info);
         }
         else if (ctx.lval() != null) {
-            VisitorInfo rhs;
+            VisitorInfo rhs; SymbolTableItem lhs = symbolTable.getSymbolByName(ctx.lval().getText());
+            if (lhs.isConstant()) {
+                System.out.println("const value can not be assigned");
+                System.exit(1);
+            }
             visit(ctx.exp()); rhs = new VisitorInfo(info);
-            System.out.printf("\tstore i32 %s, i32* %s\n", rhs, symbolTable.getSymbolByName(ctx.lval().getText()).getRegisterString());
+            System.out.printf("\tstore i32 %s, i32* %s\n", rhs, lhs.getRegisterString());
         } else {
             super.visitStmt(ctx);
         }
@@ -142,19 +148,56 @@ public class Visitor extends labBaseVisitor<Void> {
 
     @Override
     public Void visitUnaryExp(labParser.UnaryExpContext ctx) {
-        super.visitUnaryExp(ctx);
-        if (info.isValue()) {
-            if (ctx.unaryOp() != null && ctx.unaryOp().SUB() != null)
-                info.setValue(-info.getValue());
-        } else {
-            if (ctx.unaryOp() != null && ctx.unaryOp().SUB() != null) {
+        if (ctx.ident() != null) {
+            String funcName = ctx.ident().getText();
+            SymbolTableItem func = symbolTable.getSymbolByName(funcName);
+            if (func == null || !func.isFunction()) {
+                System.out.printf("function %s not found\n", funcName);
+                System.exit(1);
+            }
+            int count1 = ctx.funcRParams().exp().size();
+            int count2 = func.getParams().size();
+            if (count1 != count2) {
+                System.out.printf("function %s's params not match\n", funcName);
+                System.exit(1);
+            }
+            ArrayList<VisitorInfo> params = new ArrayList<>();
+            for (int i = 0;i < count1; ++i) {
+                visit(ctx.funcRParams().exp(i));
+                params.add(new VisitorInfo(info));
+            }
+            if (func.isINT()) {
                 SymbolTableItem item = symbolTable.newRegister();
-                System.out.printf("\t%s = sub i32 0, %s\n", item.getRegisterString(), info);
+                System.out.printf("\t%s = call i32 %s(", item.getRegisterString(), func.getRegisterString());
+                for (int i = 0;i < count1; ++i) {
+                    if (i > 0) System.out.print(", ");
+                    System.out.printf("i32 %s", params.get(i));
+                }
+                System.out.println(")");
                 info.setSymbol(item);
             }
+            if (func.isVOID()) {
+                System.out.printf("\tcall void %s(", func.getRegisterString());
+                for (int i = 0;i < count1; ++i) {
+                    if (i > 0) System.out.print(", ");
+                    System.out.printf("i32 %s", params.get(i));
+                }
+                System.out.println(")");
+            }
         }
-
-
+        else {
+            super.visitUnaryExp(ctx);
+            if (info.isValue()) {
+                if (ctx.unaryOp() != null && ctx.unaryOp().SUB() != null)
+                    info.setValue(-info.getValue());
+            } else {
+                if (ctx.unaryOp() != null && ctx.unaryOp().SUB() != null) {
+                    SymbolTableItem item = symbolTable.newRegister();
+                    System.out.printf("\t%s = sub i32 0, %s\n", item.getRegisterString(), info);
+                    info.setSymbol(item);
+                }
+            }
+        }
         return null;
     }
 
@@ -162,9 +205,14 @@ public class Visitor extends labBaseVisitor<Void> {
     public Void visitLval(labParser.LvalContext ctx) {
         SymbolTableItem var = symbolTable.getSymbolByName(ctx.getText());
         if (var != null) {
-            SymbolTableItem item = symbolTable.newRegister();
-            System.out.printf("\t%s = load i32, i32* %s\n", item.getRegisterString(), var.getRegisterString());
-            info.setSymbol(item);
+            if (var.isConstant()) {
+                info.setValue(var.getIntValue());
+            }
+            else {
+                SymbolTableItem item = symbolTable.newRegister();
+                System.out.printf("\t%s = load i32, i32* %s\n", item.getRegisterString(), var.getRegisterString());
+                info.setSymbol(item);
+            }
         } else {
             System.out.printf("%s is not declared before using", ctx.getText());
             System.exit(1);

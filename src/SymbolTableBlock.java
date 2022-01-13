@@ -35,6 +35,18 @@ public class SymbolTableBlock {
         return item;
     }
 
+    public SymbolTableItem addIntFunction(String name, ArrayList<SymbolTableItem> params) {
+        SymbolTableItem item = SymbolTableItem.newIntFunction(name, params);
+        symbols.add(item);
+        return item;
+    }
+
+    public SymbolTableItem addVoidFunction(String name, ArrayList<SymbolTableItem> params) {
+        SymbolTableItem item = SymbolTableItem.newVoidFunction(name, params);
+        symbols.add(item);
+        return item;
+    }
+
     public SymbolTableItem getSymbolByName(String name) {
         SymbolTableItem res = null;
         for (SymbolTableItem item : symbols)

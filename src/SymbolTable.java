@@ -1,9 +1,18 @@
+import java.util.ArrayList;
+
 public class SymbolTable {
     private SymbolTableBlock currentBlock;
     private int registerCounter;
 
     public SymbolTable() {
         this.currentBlock = new SymbolTableBlock();
+        ArrayList<SymbolTableItem> params;
+        currentBlock.addIntFunction("getint", new ArrayList<>());
+        currentBlock.addIntFunction("getch", new ArrayList<>());
+        params = new ArrayList<>(); params.add(SymbolTableItem.newGlobalVariableInteger("test"));
+        currentBlock.addVoidFunction("putint", params);
+        params = new ArrayList<>(); params.add(SymbolTableItem.newGlobalVariableInteger("test"));
+        currentBlock.addVoidFunction("putch", params);
         registerCounter = 0;
     }
 

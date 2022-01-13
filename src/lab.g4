@@ -26,7 +26,7 @@ addExp:         mulExp
 mulExp:         unaryExp
                 | mulExp (MUL | DIV | MOD) unaryExp;
 unaryExp:       primaryExp
-                | ident '(' (funcRParams) ')'
+                | ident '(' (funcRParams)? ')'
                 | unaryOp unaryExp;
 funcRParams:    exp ( ',' exp )*;
 unaryOp:        ADD | SUB;
