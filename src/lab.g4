@@ -19,6 +19,9 @@ stmt:           lval '=' exp ';'
                 | block
                 | (exp)? ';'
                 | IF '(' cond ')' stmt (ELSE stmt)?
+                | WHILE '(' cond ')' stmt
+                | CONTINUE
+                | BREAK
                 | RETURN exp ';';
 exp:            addExp;
 cond:           lorExp;
@@ -47,6 +50,9 @@ ident:          Ident;
 RETURN: 'return';
 IF: 'if';
 ELSE: 'else';
+WHILE: 'while';
+CONTINUE: 'continue';
+BREAK: 'break';
 
 LT: '<';
 GT: '>';

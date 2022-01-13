@@ -118,7 +118,9 @@ public class Visitor extends labBaseVisitor<Void> {
             int trueBlock = ++blockCount;
             int falseBlock = ++blockCount;
             int nxtBlock = ++blockCount;
+            info.setTrueBlock(trueBlock); info.setFalseBlock(falseBlock);
             visit(ctx.cond());
+            info.removeTrueBlock(); info.removeFalseBlock();
             System.out.printf("\nblock%d:\n", trueBlock);
             visit(ctx.stmt(0));
             System.out.printf("\tbr label %%block%d\n", nxtBlock);
@@ -128,6 +130,26 @@ public class Visitor extends labBaseVisitor<Void> {
             System.out.printf("\tbr label %%block%d\n", nxtBlock);
             System.out.printf("\nblock%d:\n", nxtBlock);
         }
+        else if (ctx.WHILE() != null) {
+            int bodyBlock = ++blockCount;
+            int nxtBlock = ++blockCount;
+            int condBlock = ++blockCount;
+            info.setTrueBlock(bodyBlock); info.setFalseBlock(nxtBlock); info.setCondBlock(condBlock);
+            System.out.printf("\tbr label %%block%d\n", condBlock);
+            System.out.printf("\nblock%d:\n", condBlock);
+            visit(ctx.cond());
+            System.out.printf("\nblock%d:\n", bodyBlock);
+            visit(ctx.stmt(0));
+            System.out.printf("\tbr label %%block%d\n", condBlock);
+            System.out.printf("\nblock%d:\n", nxtBlock);
+            info.removeCondBlock(); info.removeFalseBlock(); info.removeTrueBlock();
+        }
+        else if (ctx.CONTINUE() != null) {
+            System.out.printf("\tbr label %%block%d\n", info.getCondBlock());
+        }
+        else if (ctx.BREAK() != null) {
+            System.out.printf("\tbr label %%block%d\n", info.getFalseBlock());
+        }
         else {
             super.visitStmt(ctx);
         }
@@ -136,9 +158,9 @@ public class Visitor extends labBaseVisitor<Void> {
 
     @Override
     public Void visitCond(labParser.CondContext ctx) {
-        super.visitCond(ctx); VisitorInfo val = new VisitorInfo(info); SymbolTableItem item = symbolTable.newRegister();
+        super.visitCond(ctx);  SymbolTableItem item = symbolTable.newRegister();
         System.out.printf("\t%s = icmp ne i32 %s, 0\n", item.getRegisterString(), info);
-        System.out.printf("\tbr i1 %s, label %%block%d, label %%block%d\n", item.getRegisterString(), blockCount - 2, blockCount - 1);
+        System.out.printf("\tbr i1 %s, label %%block%d, label %%block%d\n", item.getRegisterString(), info.getTrueBlock(), info.getFalseBlock());
         return null;
     }
 
