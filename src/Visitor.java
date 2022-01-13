@@ -48,8 +48,8 @@ public class Visitor extends labBaseVisitor<Void> {
                         System.exit(1);
                     }
                     value = info.getValue();
-                    System.out.printf("%s = global i32 %d\n", item.getRegisterString(), value);
                 }
+                System.out.printf("%s = global i32 %d\n", item.getRegisterString(), value);
             }
             else {
                 System.out.printf("\t%s = alloca i32\n", item.getRegisterString());
@@ -81,8 +81,8 @@ public class Visitor extends labBaseVisitor<Void> {
                         System.exit(1);
                     }
                     value = info.getValue();
-                    System.out.printf("%s = global i32 %d\n", item.getRegisterString(), value);
                 }
+                System.out.printf("%s = global i32 %d\n", item.getRegisterString(), value);
                 item.setIntValue(value);
             }
             else {
