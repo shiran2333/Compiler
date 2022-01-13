@@ -155,7 +155,7 @@ public class Visitor extends labBaseVisitor<Void> {
                 System.out.printf("function %s not found\n", funcName);
                 System.exit(1);
             }
-            int count1 = ctx.funcRParams().exp().size();
+            int count1 = ctx.funcRParams() == null ? 0 : ctx.funcRParams().exp().size();
             int count2 = func.getParams().size();
             if (count1 != count2) {
                 System.out.printf("function %s's params not match\n", funcName);
