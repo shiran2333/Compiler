@@ -16,7 +16,7 @@ public class Visitor extends labBaseVisitor<Void> {
 
     @Override
     public Void visitFuncDef(labParser.FuncDefContext ctx) {
-        System.out.print("define dso_local i32 @main() {");
+        System.out.println("define dso_local i32 @main() {");
         super.visitFuncDef(ctx);
         System.out.println("}");
         return null;
@@ -123,11 +123,11 @@ public class Visitor extends labBaseVisitor<Void> {
             SymbolTableItem item3 = symbolTable.newRegister(), item4 = symbolTable.newRegister();
             System.out.printf("\t%s = icmp ne i32 %s, 0\n", item1.getRegisterString(), lhs);
             System.out.printf("\t%s = icmp ne i32 %s, 0\n", item2.getRegisterString(), rhs);
-            System.out.printf("\t%s = or i1 %s, %s", item3.getRegisterString(), item1.getRegisterString(), item2.getRegisterString());
+            System.out.printf("\t%s = or i1 %s, %s\n", item3.getRegisterString(), item1.getRegisterString(), item2.getRegisterString());
             System.out.printf("\t%s = zext i1 %s to i32\n", item4.getRegisterString(), item3.getRegisterString());
             info.setSymbol(item4);
         }
-        return super.visitLorExp(ctx);
+        return null;
     }
 
     @Override
@@ -141,7 +141,7 @@ public class Visitor extends labBaseVisitor<Void> {
             SymbolTableItem item3 = symbolTable.newRegister(), item4 = symbolTable.newRegister();
             System.out.printf("\t%s = icmp ne i32 %s, 0\n", item1.getRegisterString(), lhs);
             System.out.printf("\t%s = icmp ne i32 %s, 0\n", item2.getRegisterString(), rhs);
-            System.out.printf("\t%s = and i1 %s, %s", item3.getRegisterString(), item1.getRegisterString(), item2.getRegisterString());
+            System.out.printf("\t%s = and i1 %s, %s\n", item3.getRegisterString(), item1.getRegisterString(), item2.getRegisterString());
             System.out.printf("\t%s = zext i1 %s to i32\n", item4.getRegisterString(), item3.getRegisterString());
             info.setSymbol(item4);
         }
@@ -284,6 +284,12 @@ public class Visitor extends labBaseVisitor<Void> {
                     SymbolTableItem item = symbolTable.newRegister();
                     System.out.printf("\t%s = sub i32 0, %s\n", item.getRegisterString(), info);
                     info.setSymbol(item);
+                }
+                if (ctx.unaryOp() != null && ctx.unaryOp().NOT() != null) {
+                    SymbolTableItem item1 = symbolTable.newRegister(), item2 = symbolTable.newRegister();
+                    System.out.printf("\t%s = icmp eq i32 %s, 0\n", item1.getRegisterString(), info);
+                    System.out.printf("\t%s = zext i1 %s to i32\n", item2.getRegisterString(), item1.getRegisterString());
+                    info.setSymbol(item2);
                 }
             }
         }
