@@ -16,6 +16,60 @@ public interface labVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitCompUnit(labParser.CompUnitContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link labParser#decl}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDecl(labParser.DeclContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link labParser#constDecl}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitConstDecl(labParser.ConstDeclContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link labParser#bType}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitBType(labParser.BTypeContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link labParser#constDef}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitConstDef(labParser.ConstDefContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link labParser#constInitVal}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitConstInitVal(labParser.ConstInitValContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link labParser#constExp}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitConstExp(labParser.ConstExpContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link labParser#varDecl}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitVarDecl(labParser.VarDeclContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link labParser#varDef}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitVarDef(labParser.VarDefContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link labParser#initVal}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitInitVal(labParser.InitValContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link labParser#funcDef}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -28,17 +82,17 @@ public interface labVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitFuncType(labParser.FuncTypeContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link labParser#ident}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitIdent(labParser.IdentContext ctx);
-	/**
 	 * Visit a parse tree produced by {@link labParser#block}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitBlock(labParser.BlockContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link labParser#blockItem}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitBlockItem(labParser.BlockItemContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link labParser#stmt}.
 	 * @param ctx the parse tree
@@ -51,6 +105,18 @@ public interface labVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitExp(labParser.ExpContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link labParser#lval}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitLval(labParser.LvalContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link labParser#primaryExp}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitPrimaryExp(labParser.PrimaryExpContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link labParser#addExp}.
 	 * @param ctx the parse tree
@@ -70,11 +136,11 @@ public interface labVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitUnaryExp(labParser.UnaryExpContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link labParser#primaryExp}.
+	 * Visit a parse tree produced by {@link labParser#funcRParams}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitPrimaryExp(labParser.PrimaryExpContext ctx);
+	T visitFuncRParams(labParser.FuncRParamsContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link labParser#unaryOp}.
 	 * @param ctx the parse tree
@@ -87,4 +153,10 @@ public interface labVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitNumber(labParser.NumberContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link labParser#ident}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitIdent(labParser.IdentContext ctx);
 }

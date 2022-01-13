@@ -15,7 +15,7 @@ public class Main {
         while (scanner.hasNextLine())
             source.append(scanner.nextLine()).append("\n");
 
-        System.out.println(source.toString());
+        System.out.println(source);
 
         CharStream inputStream = CharStreams.fromString(source.toString());
         labLexer lexer = new labLexer(inputStream);
