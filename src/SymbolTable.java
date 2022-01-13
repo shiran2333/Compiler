@@ -13,6 +13,12 @@ public class SymbolTable {
         currentBlock.addVoidFunction("putint", params);
         params = new ArrayList<>(); params.add(SymbolTableItem.newGlobalVariableInteger("test"));
         currentBlock.addVoidFunction("putch", params);
+        System.out.println("declare i32 @getint()\n" +
+                "declare i32 @getarray(i32*)\n" +
+                "declare i32 @getch()\n" +
+                "declare void @putint(i32)\n" +
+                "declare void @putch(i32)\n" +
+                "declare void @putarray(i32,i32*)\n");
         registerCounter = 0;
     }
 
